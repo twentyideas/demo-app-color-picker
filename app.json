@@ -1,8 +1,12 @@
 {
   "expo": {
-    "name": "20i-color-picker",
+    "name": "Basic Color Picker",
     "slug": "20i-color-picker",
-    "version": "1.0.0",
+    "owner": "20i",
+    "platforms": [
+      "android"
+    ],
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -16,17 +20,14 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
+      "versionCode": 1,
+      "package": "com.twentyideas.colorpicker",
+      "permissions": [],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     }
   }
 }
