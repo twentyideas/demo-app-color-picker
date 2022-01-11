@@ -1,30 +1,26 @@
-import { FunctionComponent } from "react"
-import { LinearGradient } from "expo-linear-gradient"
+import React from "react"
+import Svg, {
+  SvgProps,
+  Defs,
+  LinearGradient,
+  Stop,
+  Rect,
+} from "react-native-svg"
+/* SVGR has dropped some elements not supported by react-native-svg: title */
 
-const colors = {
-  red: "#ff0000",
-  yellow: "#ffff00",
-  lime: "#00ff00",
-  cyan: "#00ffff",
-  blue: "#0000ff",
-  magenta: "#ff00ff",
-}
-
-export const HueGradient: FunctionComponent = () => {
-  return (
-    <LinearGradient
-      start={{ x: 0.0, y: 0.5 }}
-      end={{ x: 1.0, y: 0.5 }}
-      style={{ width: "100%", height: "100%" }}
-      colors={[
-        colors.red,
-        colors.yellow,
-        colors.lime,
-        colors.cyan,
-        colors.blue,
-        colors.magenta,
-        colors.red,
-      ]}
-    />
-  )
-}
+export const HueGradient = (props: SvgProps) => (
+  <Svg {...props}>
+    <Defs>
+      <LinearGradient id="a">
+        <Stop offset={0} stopColor="red" />
+        <Stop offset={0.286} stopColor="#ff0" />
+        <Stop offset={0.429} stopColor="#0f0" />
+        <Stop offset={0.571} stopColor="#0ff" />
+        <Stop offset={0.714} stopColor="#00f" />
+        <Stop offset={0.857} stopColor="#f0f" />
+        <Stop offset={1} stopColor="red" />
+      </LinearGradient>
+    </Defs>
+    <Rect width="100%" height="100%" fill="url(#a)" />
+  </Svg>
+)

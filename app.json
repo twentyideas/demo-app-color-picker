@@ -4,9 +4,10 @@
     "slug": "20i-color-picker",
     "owner": "20i",
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ],
-    "version": "0.0.2",
+    "version": "0.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -21,7 +22,7 @@
       "**/*"
     ],
     "android": {
-      "versionCode": 2,
+      "versionCode": 3,
       "package": "com.twentyideas.colorpicker",
       "permissions": [],
       "adaptiveIcon": {

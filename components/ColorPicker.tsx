@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react"
 import { Color } from "../utils/Color"
 import { styles } from "../utils/styles"
-import { Canvas } from "./Canvas"
+import { Canvas, CanvasTouchHandler } from "./Canvas"
 import { Setter } from "../utils/types"
 import { HuePicker } from "./HuePicker"
 import { ColorGradient } from "./ColorGradient"
@@ -10,19 +10,16 @@ const ColorPickerUi: FunctionComponent<{
   hue: number
   height: number
   width: number
-  onPress: (coords: {
-    x: number
-    y: number
-    width: number
-    height: number
-  }) => void
-}> = ({ hue, height, width, onPress }) => {
+  onPress: CanvasTouchHandler
+  onDrag: CanvasTouchHandler
+}> = ({ hue, height, width, onPress, onDrag }) => {
   return (
     <Canvas
       width={height}
       height={width}
       style={[styles.colorPicker]}
       onPress={onPress}
+      onDrag={onDrag}
     >
       <ColorGradient hue={hue} />
     </Canvas>
@@ -35,12 +32,11 @@ export const ColorPicker: FunctionComponent<{
   setColor: Setter<Color>
 }> = ({ color, size, setColor }) => {
   const [hue, setHue] = React.useState(color.hue)
+  const hueRef = React.useRef(hue)
 
   React.useEffect(() => {
-    if (color.saturation > 0) {
-      setHue(color.hue)
-    }
-  }, [color])
+    hueRef.current = hue
+  }, [hue])
 
   React.useEffect(() => {
     if (color.hue !== hue) {
@@ -48,18 +44,30 @@ export const ColorPicker: FunctionComponent<{
     }
   }, [color, hue])
 
-  const onPress = React.useCallback(
-    (coords: { x: number; y: number; width: number; height: number }) => {
-      const sat = (coords.x / coords.width) * 100
-      const val = 100 - (coords.y / coords.height) * 100
-      setColor(Color.fromHsva(hue, sat, val))
+  const selectColor = React.useCallback<CanvasTouchHandler>(
+    coords => {
+      const sat = Math.max(0, Math.min(100, (coords.x / coords.width) * 100))
+      const val = Math.max(0, Math.min(100, 100 - (coords.y / coords.height) * 100))
+      setColor((currentColor) => {
+        if (currentColor.hue != hueRef.current || currentColor.saturation != sat || currentColor.value != val) {
+          return Color.fromHsva(hueRef.current, sat, val)
+        } else {
+          return currentColor
+        }
+      })
     },
-    [setColor, hue]
+    [setColor]
   )
 
   return (
     <>
-      <ColorPickerUi hue={hue} height={size} width={size} onPress={onPress} />
+      <ColorPickerUi
+        hue={hue}
+        height={size}
+        width={size}
+        onPress={selectColor}
+        onDrag={selectColor}
+      />
       <HuePicker width={size - 5} height={35} hue={hue} setHue={setHue} />
     </>
   )

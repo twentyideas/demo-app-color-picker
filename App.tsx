@@ -24,8 +24,8 @@ export default Sentry.Native.wrap(App)
 
 export function App() {
   const { width, height } = useWindowDimensions()
-  const [color, setColor] = React.useState<Color>(new Color(255, 255, 255))
-  const shouldUseLightText = color.value < 50
+  const [color, setColor] = React.useState<Color>(Color.fromHsva(0, 100, 100))
+  const shouldUseLightText = color.luminance < 128
   const hex = color.toHex()
 
   const copyHex = React.useCallback(() => {
