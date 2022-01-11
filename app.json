@@ -28,6 +28,9 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       }
-    }
+    },
+    "plugins": [
+      "sentry-expo"
+    ]
   }
 }
