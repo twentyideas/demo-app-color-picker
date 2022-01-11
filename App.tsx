@@ -1,9 +1,9 @@
-import { StatusBar } from 'expo-status-bar';
-import { useWindowDimensions, StyleSheet, Text, View } from 'react-native';
-import { ColorPicker } from "./components/ColorPicker";
-import React from "react";
-import { Color } from "./utils/Color";
-import { uiColors } from "./utils/styles";
+import { StatusBar } from 'expo-status-bar'
+import { useWindowDimensions, StyleSheet, Text, View } from 'react-native'
+import { ColorPicker } from "./components/ColorPicker"
+import React from "react"
+import { Color } from "./utils/Color"
+import { uiColors } from "./utils/styles"
 
 export default function App() {
     const [coverUi, setCoverUi] = React.useState(true)
@@ -16,7 +16,7 @@ export default function App() {
             {coverUi && <View style={styles.cover}><Text>Loading...</Text></View>}
             <StatusBar style="auto" />
         </View>
-    );
+    )
 }
 
 const styles = StyleSheet.create({
@@ -34,4 +34,4 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%'
     }
-});
+})

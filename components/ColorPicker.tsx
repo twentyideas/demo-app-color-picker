@@ -7,40 +7,62 @@ import { Canvas } from "./Canvas";
 import { Setter } from "../utils/types";
 import { HuePicker } from "./HuePicker";
 
-export const ColorPicker: FunctionComponent<{ size: number, color: Color, setColor: Setter<Color>, onDraw?: () => void }> = ({ color, size, onDraw  }) => {
-    const [colorCtx, setColorCtx] = React.useState<null | Expo2DContext>(null);
+export const ColorPicker: FunctionComponent<{ size: number, color: Color, setColor: Setter<Color>, onDraw?: () => void }> = ({ color, size, onDraw, setColor  }) => {
+    const [canvasInfo, setCanvasInfo] = React.useState<{ ctx: null | Expo2DContext, width: number, height: number }>({ ctx: null, width: 0, height: 0 } )
     const [hue, setHue] = React.useState(color.hue)
     const hueColor = React.useMemo(() => Color.fromHue(hue), [hue])
-    const scaledSize = PixelRatio.getPixelSizeForLayoutSize(size)
 
     React.useEffect(() => {
-        setHue(color.hue)
-    }, [color.hue])
+        if (color.saturation > 0) {
+            setHue(color.hue)
+        }
+    }, [color])
 
     React.useEffect(() => {
-        if (!colorCtx) return;
+        if (color.hue !== hue) {
+            setColor(Color.fromHsva(hue, color.saturation, color.value))
+        }
+    }, [color, hue])
 
-        const grad = colorCtx.createLinearGradient(0, 0, scaledSize, 0);
-        grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-        grad.addColorStop(1, hueColor.toString());
+    React.useEffect(() => {
+        if (!canvasInfo.ctx) return;
 
-        colorCtx.fillStyle = grad;
-        colorCtx.fillRect(0, 0, scaledSize, scaledSize);
+        const scaledWidth = PixelRatio.getPixelSizeForLayoutSize(canvasInfo.width)
+        const scaledHeight = PixelRatio.getPixelSizeForLayoutSize(canvasInfo.height)
 
-        const vgrad = colorCtx.createLinearGradient(0, 0,0 , scaledSize);
-        vgrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
-        vgrad.addColorStop(1, 'rgba(0, 0, 0, 255)');
+        const horizontalGradient = canvasInfo.ctx.createLinearGradient(0, 0, scaledWidth, 0);
+        horizontalGradient.addColorStop(0, 'rgba(255, 255, 255, 1)')
+        horizontalGradient.addColorStop(1, hueColor.toString())
 
-        colorCtx.fillStyle = vgrad;
-        colorCtx.fillRect(0, 0, scaledSize, scaledSize);
-        colorCtx.flush();
-        onDraw?.();
-    }, [colorCtx, hueColor, scaledSize])
+        canvasInfo.ctx.fillStyle = horizontalGradient
+        canvasInfo.ctx.fillRect(0, 0, scaledWidth, scaledHeight)
+
+        const verticalGradient = canvasInfo.ctx.createLinearGradient(0, 0,0 , scaledHeight)
+        verticalGradient.addColorStop(0, 'rgba(0, 0, 0, 0)')
+        verticalGradient.addColorStop(1, 'rgba(0, 0, 0, 255)')
+
+        canvasInfo.ctx.fillStyle = verticalGradient
+        canvasInfo.ctx.fillRect(0, 0, scaledWidth, scaledHeight)
+        canvasInfo.ctx.flush()
+        onDraw?.()
+    }, [canvasInfo, hueColor])
 
     return (
         <>
-            <Canvas width={size} height={size} style={[ styles.colorPicker ]} onContextCreate={setColorCtx} />
-            <HuePicker width={size} height={35} hue={hue} setHue={setHue} />
+            <Canvas
+                width={size}
+                height={size}
+                style={[ styles.colorPicker ]}
+                onContextCreate={React.useCallback((ctx, dims) => {
+                    setCanvasInfo({ ctx, ...dims })
+                }, [])}
+                onPress={React.useCallback((coords) => {
+                    const sat = coords.x / coords.width * 100;
+                    const val = 100 - coords.y / coords.height * 100;
+                    setColor(Color.fromHsva(hue, sat, val))
+                }, [setColor, hue])}
+            />
+            <HuePicker width={size - 5} height={35} hue={hue} setHue={setHue} />
         </>
     )
 }
