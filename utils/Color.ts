@@ -1,3 +1,5 @@
+export const HUE_DEGREES = 360
+
 export class Color {
   /**
    * @param r Red from 0 to 255
@@ -94,13 +96,13 @@ export class Color {
     let foundMax = false
     for (const i of [0, 1, 2]) {
       if (rgb[i] == max && !foundMax) {
-        hue += i * 120
+        hue += i * (HUE_DEGREES / 3)
         foundMax = true
       } else if (rgb[i] > min) {
         let sign = foundMax ? 1 : -1
 
         if (i == rgb.length - 1 && foundMax) {
-          hue = 360
+          hue = HUE_DEGREES
           sign = -1
         }
 

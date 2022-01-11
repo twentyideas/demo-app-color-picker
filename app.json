@@ -31,6 +31,18 @@
     },
     "plugins": [
       "sentry-expo"
-    ]
+    ],
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "twenty-ideas-s4",
+            "project": "demo-app-color-picker",
+            "authToken": "(set in .env)"
+          }
+        }
+      ]
+    }
   }
 }
